@@ -1,0 +1,25 @@
+
+// Fonts
+@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+/**** CUSTOM STYLES ****/	
+body{
+	background-color:white;
+}
+
+.navbar-header {
+    border-bottom: 5px solid white;
+}
+
+.navbar-default .navbar-nav > li > a.active {
+	border-bottom: 5px solid #3ad477;
+    /*background-color: rgb(58, 212, 119);
+    color: white;*/
+    font-weight: bold;
+}

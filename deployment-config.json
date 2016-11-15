@@ -1,0 +1,9 @@
+{
+    "type": "sftp",
+    "host": "128.0.203.170",
+    "username": "javier",
+    "password": "javier.88",
+    "port": 22,
+    "remotePath": "/var/www/laravel/",
+    "uploadOnSave": true
+}
