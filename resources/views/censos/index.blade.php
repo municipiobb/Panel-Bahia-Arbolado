@@ -53,13 +53,13 @@
               $.ajax({
                 type: "PUT",
                 url: "{{ url('especies') }}" + id + "/aprobar",
-                success: success,
+                success: function (){
+                    $('#row-'+id).remove();
+                },
                 data: { _token: window.Laravel.csrfToken}
             });
 
-              function success(res){
-                $('#row-'+id).remove();
-            }
+
         }
     });         
     }
@@ -70,13 +70,13 @@
               $.ajax({
                 type: "DELETE",
                 url: "{{ url('especies') }}/" + id,
-                success: success,
+                success: function (){
+                    $('#row-'+id).remove();
+                },
                 data: { _token: window.Laravel.csrfToken}
             });
 
-              function success(res){
-                $('#row-'+id).remove();
-            }
+
         }
     });         
     }

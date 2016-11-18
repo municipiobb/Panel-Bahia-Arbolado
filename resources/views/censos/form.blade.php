@@ -140,13 +140,13 @@
 					$.ajax({
 						type: "DELETE",
 						url: "{{ url('censos/imagen') }}/" + id,
-						success: success,
+						success: function (){
+                            $('#img-'+id).remove();
+                        },
 						data: { _token: window.Laravel.csrfToken}
 					});
 
-					function success(res){
-						$('#img-'+id).remove();
-					}
+
 				}
 			});
 		});
