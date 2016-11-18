@@ -23,7 +23,7 @@
                                 <a href="{{ action('EspeciesController@edit', $especie->id) }}" style="font-size: 18px; color: #00c2ff;" title="">
                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </a>
-                                @if(!$especie->hasArboles())
+                                @if(!$especie->hasCensos())
                                 <a href="#" style="font-size: 18px; color: red;" title="" onclick="deleteItem({{ $especie->id }})">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </a>

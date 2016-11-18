@@ -10,12 +10,12 @@ class Especie extends Model
     	'nombre'
     ];
 
-    public function arboles(){
-    	return $this->hasMany(Arbol::class);
+    public function censos(){
+        return $this->hasMany(Censo::class);
     }
 
-    public function hasArboles(){
-    	if($this->arboles()->count())
+    public function hasCensos(){
+    	if($this->censos()->count())
     		return true;
     	else
     		return false;

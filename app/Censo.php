@@ -2,9 +2,12 @@
 
 namespace App;
 
-use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int especie_id
+ * @property string nombre
+ */
 class Censo extends Model
 {
 	const APROBADO = 1;

@@ -29,12 +29,12 @@ Route::put('censos/{id}/aprobar', 'CensosController@aprobar');
 Route::delete('censos/imagen/{id}', 'CensosController@borrarImagen');
 
 Route::get('mapa', function(){
-	$arboles = App\Arbol::where('status', App\Arbol::APROBADO)->get();
+	$censos = App\Censo::where('status', App\Censo::APROBADO)->get();
 	$especies = App\Especie::pluck('nombre', 'id');
 	$estados = App\Acme\Constantes::getEstados();
 	$tamanios = App\Acme\Constantes::getTamanios();
 
-	return view('mapa.index2', compact('arboles', 'especies', 'estados', 'tamanios'));
+	return view('mapa.index2', compact('censos', 'especies', 'estados', 'tamanios'));
 });
 
 // Authentication Routes...

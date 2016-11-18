@@ -11,7 +11,6 @@ class HomeController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -21,6 +20,7 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -31,7 +31,8 @@ class HomeController extends Controller
         $diametro = $request->get('diametro', '');
         $ancho_vereda = $request->get('ancho_vereda', '');
         $tipo_vereda = $request->get('tipo_vereda', '');
-        
+
+        /** @var Censo $censos */
         $censos = Censo::orderBy('id', 'desc');
 
         if($especie_id)
@@ -55,7 +56,7 @@ class HomeController extends Controller
 
         $censos = $censos->paginate(15);
 
-        $especies = Especie::all();
+        $especies = Especie::orderBy('nombre')->all();
 
         return view('home', compact('censos', 'especies'));
     }
