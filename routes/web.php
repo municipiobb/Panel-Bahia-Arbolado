@@ -30,7 +30,7 @@ Route::delete('censos/imagen/{id}', 'CensosController@borrarImagen');
 
 Route::get('mapa', function(){
 	$censos = App\Censo::where('status', App\Censo::APROBADO)->get();
-	$especies = App\Especie::pluck('nombre', 'id');
+	$especies = App\Especie::orderBy('nombre')->pluck('nombre', 'id');
 	$estados = App\Acme\Constantes::getEstados();
 	$tamanios = App\Acme\Constantes::getTamanios();
 

@@ -11,12 +11,19 @@
                     @include('flash::message')
                     <div class="row">
                     <form method="GET">
-                        <div class="col-md-10">
+                        <div class="col-md-10 col-sm-10 col-xs-8">
                             <div class="control-group">
-                                <input type="text" id="search" class="form-control" name="q" placeholder="Búscar" autocomplete="off">
+                                <input type="text"
+                                       id="search"
+                                       class="form-control"
+                                       name="q"
+                                       value="{{ request()->get('q') }}"
+                                       placeholder="Búscar"
+                                       autocomplete="off"
+                                >
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 col-sm-2 col-xs-4">
                             <div class="control-group">
                                 <a href="{{ action('CallesController@index') }}" id="reset" class="btn btn-default">Resetear</a>
                             </div>

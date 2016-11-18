@@ -56,7 +56,7 @@ class HomeController extends Controller
 
         $censos = $censos->paginate(15);
 
-        $especies = Especie::orderBy('nombre')->all();
+        $especies = Especie::orderBy('nombre')->get();
 
         return view('home', compact('censos', 'especies'));
     }

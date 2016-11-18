@@ -14,6 +14,11 @@ class Especie extends Model
         return $this->hasMany(Censo::class);
     }
 
+    public function setNombreAttribute($value)
+    {
+        $this->attributes['nombre'] = ucfirst(strtolower($value));
+    }
+
     public function hasCensos(){
     	if($this->censos()->count())
     		return true;
