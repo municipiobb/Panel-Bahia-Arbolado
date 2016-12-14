@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imagen;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Storage;
 use Image;
 use App\Censo;
 use App\Calle;
@@ -73,6 +74,8 @@ class CensosController extends Controller
 
     public function edit($id)
     {
+        /** @var Censo $censo */
+
         $censo = Censo::findOrFail($id);
         $especies = Especie::pluck('nombre', 'id');
         $estados = Constantes::getEstados();
@@ -90,6 +93,7 @@ class CensosController extends Controller
 
     public function update(Request $request, $id)
     {
+        /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
         $calle = Calle::findOrFail($request->calle_id)->nombre;
 
@@ -131,6 +135,7 @@ class CensosController extends Controller
 
     public function aprobar($id)
     {
+        /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
         $censo->status = Censo::APROBADO;
         $censo->save();
@@ -144,6 +149,8 @@ class CensosController extends Controller
         $imagen = Imagen::findOrFail($id);
         $imagen->delete();
 
+        $res = Storage::disk('public')->delete($imagen->url);
+
         return response()->json(['success' => 1, 'flash' => 'Imagen Borrada.']);
     }
 
@@ -151,21 +158,35 @@ class CensosController extends Controller
     {
         /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
-        $censo->delete();
 
-        return response()->json(['success' => 1, 'flash' => 'Imagen Borrada.']);
+        $imagenes = $censo->imagenes;
+
+        foreach ($imagenes as $imagen) {
+            Storage::disk('public')->delete($imagen->url);
+        }
+
+        $censo->delete();
+        return response()->json(['success' => 1, 'flash' => 'Censo Borrado.']);
     }
 
-    public function saveImagen(Request $request, $censo)
+    /**
+     * @param Request $request
+     * @param $censo
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveImagen(Request $request, Censo $censo)
     {
         if ( $request->hasFile('image') ) {
             $image = $request->file('image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
             $relative_path = 'uploads' . DIRECTORY_SEPARATOR . $filename;
             $path = public_path($relative_path);
+
+            /** @var \Intervention\Image\Image $resized */
             $resized = Image::make($image->getRealPath())->resize(400, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
+
             $resized->save($path);
 
             $img_data = file_get_contents($path);
@@ -181,4 +202,22 @@ class CensosController extends Controller
             return response()->json([]);
         }
     }
+    /*
+    public function saveImage2(Request $request){
+        $file = $request->file('avatar');
+
+        $path = $file->hashName('avatars');
+        // avatars/bf5db5c75904dac712aea27d45320403.jpeg
+
+        $image = Image::make($file);
+
+        $image->fit(250, 250, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        Storage::put($path, (string) $image->encode());
+
+        return response()->json(['path'=>$path]);
+
+    }*/
 }

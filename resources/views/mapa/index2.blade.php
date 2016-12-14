@@ -16,26 +16,39 @@
                     </div>
                 </div>
                 <div class="row">
-
                     <div class="col-md-12">
                         <label>Especie </label>
-                        {!! Form::select('especie', $especies, null, ['id'=>'especie', 'class' => 'form-control', 'placeholder' => 'Seleccione Especie']); !!}
+                        {!! Form::select('especie', $especies, null, ['id'=>'especie', 'class' => 'form-control', 'placeholder' => 'Seleccione Especie']) !!}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <label>Estado </label>
-                        {!! Form::select('estado', $estados, null, ['id'=>'estado', 'class' => 'form-control', 'placeholder' => 'Seleccione Estados']); !!}
+                        {!! Form::select('estado', $estados, null, ['id'=>'estado', 'class' => 'form-control', 'placeholder' => 'Seleccione Estados']) !!}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Tamaño </label>
+                        {!! Form::select('tamanio', $tamanios, null, ['id'=>'tamanio', 'class' => 'form-control', 'placeholder' => 'Seleccione Tamaño']) !!}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Calle </label>
+                        {!! Form::select('calle', $calles, null, ['id'=>'calle', 'class' => 'form-control', 'placeholder' => 'Seleccione Calle']) !!}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <label>Tamaño </label>
-                        {!! Form::select('tamanio', $tamanios, null, ['id'=>'tamanio', 'class' => 'form-control', 'placeholder' => 'Seleccione Tamaño']); !!}
+                        <label>Altura Min.</label>
+                        {!! Form::text('altura_min', null, ['id'=>'altura_min', 'class' => 'form-control', 'placeholder' => 'Altura Min']) !!}
+
+                        <label>Altura Max.</label>
+                        {!! Form::text('altura_max', null, ['id'=>'altura_max', 'class' => 'form-control', 'placeholder' => 'Altura Max']) !!}
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12">
                         <button id="filtrar" href="#" class="btn btn-primary btn-sm">Filtrar</button>
@@ -44,6 +57,8 @@
             </form>
         </div>
         <div id="map" style="width:100%;height: 450px;"></div>
+        <hr>
+        <div id="detalle" class="row" style="padding: 25px;"></div>
     </div>
     <style type="text/css" media="screen">
 
@@ -77,7 +92,6 @@
             position: absolute;
             right: 15px;
             top: 15px;
-            bottom: 15px;
             background: white;
             z-index: 1000;
             border: 5px solid #e6e3e3;
@@ -98,13 +112,13 @@
         }
     </style>
 
-    <script src="js/markerclusterer.js"></script>
+    <script src="{{ url('js/markerclusterer.js') }}"></script>
     <script>
 
+        var map;
+        var infoWindow;
         var markers = [];
         var markerClusters = [];
-        var infoWindow;
-        var map;
         function initialize() {
             var center = new google.maps.LatLng(-38.7183038, -62.2642266);
 
@@ -130,9 +144,24 @@
                                 '<div style="text-align:center"><img src="http://arboladoapp.bahiablanca.gob.ar/' + (this.content.imagenes[0] ? this.content.imagenes[0].url : '') + '" style="width100%; max-width:200px; margin-bottom: 10px;"></div>' +
                                 '<div><label>Dirección:</label> ' + this.content.direccion + '</div>' +
                                 '<div><label>Altura:</label> ' + this.content.altura + '</div>' +
-                                '</div>'
+                                '</div>';
                         infoWindow.setContent(html);
                         infoWindow.open(this.getMap(), this);
+
+                        var detalle =
+                                '<div class="panel col-md-12" style="background: #f7f7f7;">' +
+                                '<h3>Datos del censo</h3>' +
+                                '<p><label>Especie:</label> '  + this.content.especie.nombre + '</p>' +
+                                '<p><label>Estado:</label> '  + this.content.estado + '</p>' +
+                                '<p><label>Tamaño:</label> '  + this.content.tamanio + '</p>' +
+                                '<p><label>Diametro tronco:</label> '  + this.content.diametro_tronco + '</p>' +
+                                '<p><label>Ancho vereda:</label> '  + this.content.ancho_vereda + '</p>' +
+                                '<p><label>Tipo vereda:</label> '  + this.content.tipo_vereda + '</p>' +
+                                '<p><label>Cantero:</label> '  + this.content.cantero + '</p>' +
+                                '<p><label>Dirección:</label> '  + this.content.direccion + '</p>' +
+                                '<p><label>Observaciones:</label> '  + this.content.observaciones + '</p></div>';
+
+                        $('#detalle').html(detalle);
                     });
 
                     console.log(value);
@@ -142,8 +171,7 @@
                     markers[value.especie_id].push(marker);
                 });
 
-
-                for (i = 0; i < markers.length; i++) {
+                for (var i = 0; i < markers.length; i++) {
                     var options = {
                         imagePath: 'images/m'
                     };
@@ -163,7 +191,7 @@
                     "cache-control": "no-cache"
                 },
                 "data": $(this).serialize()
-            }
+            };
 
             $.ajax(settings).done(function (response) {
                 console.log(response);
@@ -183,12 +211,27 @@
 
                     google.maps.event.addListener(marker, 'click', function () {
                         var html = '<div><div><label>' + this.content.especie.nombre + '</label></div>' +
-                                '<div style="text-align:center"><img src="http://arboladoapp.bahiablanca.gob.ar/' + (this.content.imagenes[0] ? this.content.imagenes[0].url : '') + '" style="width100%; max-width:200px; margin-bottom: 10px;"></div>' +
+                                '<div style="text-align:center"><img src="{{ url('/') }}/' + (this.content.imagenes[0] ? this.content.imagenes[0].url : '') + '" style="width:100%; max-width:200px; margin-bottom: 10px;"></div>' +
                                 '<div><label>Dirección:</label> ' + this.content.direccion + '</div>' +
                                 '<div><label>Altura:</label> ' + this.content.altura + '</div>' +
-                                '</div>'
+                                '</div>';
                         infoWindow.setContent(html);
                         infoWindow.open(this.getMap(), this);
+
+                        var detalle =
+                                '<div class="panel col-md-12" style="background: #f7f7f7;">' +
+                                '<h3>Datos del censo</h3>' +
+                                '<p><label>Especie:</label> '  + this.content.especie.nombre + '</p>' +
+                                '<p><label>Estado:</label> '  + this.content.estado + '</p>' +
+                                '<p><label>Tamaño:</label> '  + this.content.tamanio + '</p>' +
+                                '<p><label>Diametro tronco:</label> '  + this.content.diametro_tronco + '</p>' +
+                                '<p><label>Ancho vereda:</label> '  + this.content.ancho_vereda + '</p>' +
+                                '<p><label>Tipo vereda:</label> '  + this.content.tipo_vereda + '</p>' +
+                                '<p><label>Cantero:</label> '  + this.content.cantero + '</p>' +
+                                '<p><label>Dirección:</label> '  + this.content.direccion + '</p>' +
+                                '<p><label>Observaciones:</label> '  + this.content.observaciones + '</p></div>';
+
+                        $('#detalle').html(detalle);
                     });
 
                     if (!markers[value.especie_id]) {
@@ -206,11 +249,10 @@
                 }
 
                 $('#loading_data').hide();
-            }).fail(function (response) {
+            }).fail(function () {
                 $('#loading_data').hide();
             });
         });
-
 
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvUN-CRtMA8YD1vDpGFpt45VOuJXWIyzo&callback=initialize"></script>

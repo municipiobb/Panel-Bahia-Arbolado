@@ -182,7 +182,7 @@ return [
         Laracasts\Flash\FlashServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 
-        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
+        //Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
         ],
 
     /*

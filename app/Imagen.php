@@ -4,6 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string url
+ */
 class Imagen extends Model
 {
     protected $table = 'imagenes';

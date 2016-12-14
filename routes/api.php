@@ -1,6 +1,5 @@
 <?php
 
-use App\AndroidLog;
 use Illuminate\Http\Request;
 
 /*
@@ -14,32 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('reportpath',function(Request $request){
-	$fichero = '/var/www/laravel/public/uploads/android_bug_'.date('d-m-Y').'_'.time().'.txt';
-
-	AndroidLog::create(['error'=> json_encode($request->all())]);
-
-	$myfile = fopen($fichero, "w") or die("Unable to open file!");
-	//$txt = "John Doe\n";
-	@fwrite($myfile, json_encode($request->all()));
-	//$txt = "Jane Doe\n";
-	//@fwrite($myfile, $request->all());
-	@fclose($myfile);
-
+Route::post('reportpath', function (Request $request) {
 });
 
-Route::get('/calles/{date?}', function($date=''){
-	$data = [];
-	if($date){
-		if(\App\Calle::where('updated_at', '>', \Carbon\Carbon::createFromFormat('d-m-Y H:i:s',$date))->count())
-			$data = \App\Calle::all();
-	}else{
-		$data = \App\Calle::all();
-	}
+Route::get('/calles/{date?}', function ($date = '') {
+    $data = [];
+    if ( $date ) {
+        if ( \App\Calle::where('updated_at', '>', \Carbon\Carbon::createFromFormat('d-m-Y H:i:s', $date))->count() )
+            $data = \App\Calle::all();
+    } else {
+        $data = \App\Calle::all();
+    }
 
-	return response()->json([
-		'data' => $data
-		]);
+    return response()->json([
+        'data' => $data
+    ]);
 });
 
 Route::get('/especies/{date?}', 'EspeciesController@getAll');
@@ -51,25 +39,60 @@ Route::post('/censo', 'ApiController@saveCenso');
 Route::post('/censo/{id}/imagenes', 'ApiController@saveImagen');
 
 Route::get('/user', function (Request $request) {
-	return $request->user();
-});//->middleware('auth:api');
+    return $request->user();
+});
 
-Route::post('mapa_ll', function(Request $request){
-	$especie = $request->especie;
-	$estado = $request->estado;
-	$tamanio = $request->tamanio;
+Route::post('arboles', function (Request $request) {
+    $calle = request('calle');
+    $altura1 = request('altura1');
+    $altura2 = request('altura2');
 
-	$censos = \App\Censo::with('especie')->with('calle')->with('imagenes')->orderBy('id');
+    $especie = request('especie');
 
-	if($especie)
-		$censos = $censos->where('especie_id', $especie);
+    $censos = \App\Censo::with('especie')->orderBy('id');
 
-	if($estado)
-		$censos = $censos->where('estado', $estado);
+    if ( $calle )
+        $censos = $censos->where('calle_id', $calle);
 
-	if($tamanio)
-		$censos = $censos->where('tamanio', $tamanio);
+    if ( $altura1 && $altura2 )
+        $censos = $censos->wittwen($altura1, $altura2);
 
+    if ( $especie )
+        $censos = $censos->where('especie_id', $especie);
 
-	return response()->json($censos->get());
+    return $censos->get();
+});
+
+Route::post('mapa_ll', function (Request $request) {
+    $especie = $request->especie;
+    $estado = $request->estado;
+    $tamanio = $request->tamanio;
+    $calle = $request->calle;
+
+    $altura_min = $request->altura_min;
+    $altura_max = $request->altura_max;
+
+    $censos = \App\Censo::with('especie')->with('calle')->with('imagenes')->orderBy('id');
+
+    if ( $especie )
+        $censos = $censos->where('especie_id', $especie);
+
+    if ( $estado )
+        $censos = $censos->where('estado', $estado);
+
+    if ( $tamanio )
+        $censos = $censos->where('tamanio', $tamanio);
+
+    if ( $calle )
+        $censos = $censos->where('calle_id', $calle);
+
+    if ( $altura_min )
+        $censos = $censos->where('altura', '>=', $altura_min);
+
+    if ( $altura_max )
+        $censos = $censos->where('altura', '<=', $altura_max);
+
+    $censos = $censos->where('status', \App\Censo::APROBADO);
+
+    return response()->json($censos->get());
 });

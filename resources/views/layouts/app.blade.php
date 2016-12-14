@@ -10,21 +10,56 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- Add fancyBox -->
     <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
-    <script src="/js/bootbox.js"></script>
-    <script src="/js/select2.min.js"></script>
+    <script src="{{ asset('js/bootbox.js') }}"></script>
+    <script src="{{ asset('js/select2.min.js') }}"></script>
     <!-- Styles -->
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/css/modal.min.css" rel="stylesheet">
-    <link href="/css/select2.min.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/modal.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
 
+    @yield('styles')
 
+    <style type="text/css">
+        .navbar-default .navbar-brand {
+            color: #019153;
+            font-size:22px;
+            font-weight:bolder;
+        }
+
+        .panel-default > .panel-heading {
+            color: white;
+            background-color:#4c4c4c;
+            border: 1px solid #4c4c4c;
+        }
+
+        .panel-default {border-color: #969494;}
+
+        .btn-primary {color: #fff;border-radius: 4px;background-color: #42bb85;border-color: #3cab79;}
+
+        .btn-primary:hover {background-color: #50c591;border-color: #50c591;}
+
+        .btn-link, .btn-link{color:#4c4c4c}
+
+        .btn-link:hover, .btn-link:focus{color:#2f2f2f}
+
+        .btn-primary:active, .btn-primary.active, .open > .btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #359068;
+            border-color: #359068;
+        }
+
+        .btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:active.focus, .btn-primary.active:hover, .btn-primary.active:focus, .btn-primary.active.focus{
+            color: #fff;
+            background-color: #359068;
+            border-color: #359068;
+        }
+    </style>
     <!-- Scripts -->
     <script>
         window.Laravel = <?php echo json_encode([
@@ -58,6 +93,7 @@
 
                         <li><a href="{{ action('EspeciesController@index') }}" {{ Request::is('especies') ? 'class=active' : '' }}>Especies</a></li>
                         <li><a href="{{ action('CallesController@index') }}" {{ Request::is('calles') ? 'class=active' : '' }}>Calles</a></li>
+                        <li><a href="{{ action('ImagenesController@index') }}" {{ Request::is('imagenes') ? 'class=active' : '' }}>Imagenes</a></li>
                         <li><a href="{{ url('mapa') }}" {{ Request::is('mapa') ? 'class=active' : '' }}>Mapa</a></li>
 
                         <!-- <li class="dropdown">
@@ -109,6 +145,6 @@
 
 @yield('content')
 
-<!-- Scripts -->
+        @yield('scripts')
 </body>
 </html>

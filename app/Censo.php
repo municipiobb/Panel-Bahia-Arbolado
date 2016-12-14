@@ -2,11 +2,16 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int especie_id
  * @property string nombre
+ * @property  int lat
+ * @property  int long
+ * @property int status
+ * @property Collection imagenes
  */
 class Censo extends Model
 {
@@ -55,7 +60,10 @@ class Censo extends Model
 		return $this->belongsTo(Calle::class);
 	}
 
-	public function imagenes(){
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function imagenes(){
 		return $this->hasMany(Imagen::class);
 	}
 }

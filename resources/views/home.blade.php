@@ -9,107 +9,144 @@
 
                     <div class="panel-body">
                         @include('flash::message')
-
-                        <p>Filtros</p>
+                        <div class="col-md-12">
+                            <p>Filtros</p>
+                        </div>
                         <form action="" method="get" accept-charset="utf-8">
 
-                            <div class="col-md-2">
-                                <label>Especie</label>
-                                <select id="especies" class="especies" name="especie" style="width:100%">
-                                    <option value="0">Especie</option>
-                                    @foreach($especies as $especie)
-                                        <option value="{{$especie->id}}" {{ request()->especie == $especie->id ? 'selected': ''}}>{{ $especie->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label>Estado</label>
-                                <select id="estado" class="estado" name="estado" style="width:100%">
-                                    <option value="">Estado</option>
-                                    <option value="Bueno" {{ request()->estado == 'Bueno' ? 'selected': ''}}>Bueno
-                                    </option>
-                                    <option value="Regular" {{ request()->estado == 'Redular' ? 'selected': ''}}>
-                                        Regular
-                                    </option>
-                                    <option value="Malo" {{ request()->estado == 'Malo' ? 'selected': ''}}>Malo</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label>Tamaño arbol</label>
-                                <select id="tamanio" class="tamanio" name="tamanio" style="width:100%">
-                                    <option value="">Tamaño</option>
-                                    <option value="Chico" {{ request()->tamanio == 'Chico' ? 'selected': ''}}>Chico
-                                    </option>
-                                    <option value="Mediano" {{ request()->tamanio == 'Mediano' ? 'selected': ''}}>
-                                        Mediano
-                                    </option>
-                                    <option value="Grande" {{ request()->tamanio == 'Grande' ? 'selected': ''}}>Grande
-                                    </option>
-                                </select>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <label>Especie</label>
+                                        <select id="especies" class="especies" name="especie" style="width:100%">
+                                            <option value="0">Especie</option>
+                                            @foreach($especies as $key => $value)
+                                                <option value="{{$key}}" {{ request()->especie == $key ? 'selected': ''}}>{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Estado</label>
+                                        <select id="estado" class="estado" name="estado" style="width:100%">
+                                            <option value="">Estado</option>
+                                            <option value="Bueno" {{ request()->estado == 'Bueno' ? 'selected': ''}}>
+                                                Bueno
+                                            </option>
+                                            <option value="Regular" {{ request()->estado == 'Redular' ? 'selected': ''}}>
+                                                Regular
+                                            </option>
+                                            <option value="Malo" {{ request()->estado == 'Malo' ? 'selected': ''}}>
+                                                Malo
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Tamaño arbol</label>
+                                        <select id="tamanio" class="tamanio" name="tamanio" style="width:100%">
+                                            <option value="">Tamaño</option>
+                                            <option value="Chico" {{ request()->tamanio == 'Chico' ? 'selected': ''}}>
+                                                Chico
+                                            </option>
+                                            <option value="Mediano" {{ request()->tamanio == 'Mediano' ? 'selected': ''}}>
+                                                Mediano
+                                            </option>
+                                            <option value="Grande" {{ request()->tamanio == 'Grande' ? 'selected': ''}}>
+                                                Grande
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>Diametro Tronco</label>
+                                        <select id="diametro" class="diametro" name="diametro" style="width:100%">
+                                            <option value="">Diametro</option>
+                                            <option value="-30 cm" {{ request()->diametro == '-30 cm' ? 'selected': ''}}>
+                                                -30
+                                                cm
+                                            </option>
+                                            <option value="+50 cm" {{ request()->diametro == '+50 cm' ? 'selected': ''}}>
+                                                +50
+                                                cm
+                                            </option>
+                                            <option value="30-50 cm" {{ request()->diametro == '30-50 cm' ? 'selected': ''}}>
+                                                30-50 cm
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>Ancho Vereda</label>
+                                        <select id="ancho_vereda" class="ancho_vereda" name="ancho_vereda"
+                                                style="width:100%">
+                                            <option value="">Ancho</option>
+                                            <option value="-1.5 mts" {{ request()->ancho_vereda == '-1.5 mts' ? 'selected': ''}}>
+                                                -1.5 mts
+                                            </option>
+                                            <option value="+3.5 mts" {{ request()->ancho_vereda == '+3.5 mts' ? 'selected': ''}}>
+                                                +3.5 mts
+                                            </option>
+                                            <option value="1.5-3.5 mts" {{ request()->ancho_vereda == '1.5-3.5 mts' ? 'selected': ''}}>
+                                                1.5-3.5 mts
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>Tipo Vereda</label>
+                                        <select id="tipo_vereda" class="tipo_vereda" name="tipo_vereda"
+                                                style="width:100%">
+                                            <option value="">Tipo</option>
+                                            <option value="Baldosa" {{ request()->tipo_vereda == 'Baldosa' ? 'selected': ''}}>
+                                                Baldosa
+                                            </option>
+                                            <option value="Tierra" {{ request()->tipo_vereda == 'Tierra' ? 'selected': ''}}>
+                                                Tierra
+                                            </option>
+                                            <option value="Tierra y cesped" {{ request()->tipo_vereda == 'Tierra y cesped' ? 'selected': ''}}>
+                                                Tierra y cesped
+                                            </option>
+
+                                            <option value="Tierra, cesped y baldosa" {{ request()->tipo_vereda == 'Tierra, cesped y baldosa' ? 'selected': ''}}>
+                                                Tierra, cesped y baldosa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label>Diametro Tronco</label>
-                                <select id="diametro" class="diametro" name="diametro" style="width:100%">
-                                    <option value="">Diametro</option>
-                                    <option value="-30 cm" {{ request()->diametro == '-30 cm' ? 'selected': ''}}>-30
-                                        cm
-                                    </option>
-                                    <option value="+50 cm" {{ request()->diametro == '+50 cm' ? 'selected': ''}}>+50
-                                        cm
-                                    </option>
-                                    <option value="30-50 cm" {{ request()->diametro == '30-50 cm' ? 'selected': ''}}>
-                                        30-50 cm
-                                    </option>
-                                </select>
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <div class="col-md-2">
+                                        <label>Calle </label>
+                                        {!! Form::select('calle', $calles, request()->calle, ['id'=>'calle', 'class' => 'form-control', 'placeholder' => 'Seleccione Calle']) !!}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>Altura Min.</label>
+                                        {!! Form::text('altura_min', request()->altura_min, ['id'=>'altura_min', 'class' => 'form-control', 'placeholder' => 'Altura Min']) !!}
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Altura Max.</label>
+                                        {!! Form::text('altura_max', request()->altura_max, ['id'=>'altura_max', 'class' => 'form-control', 'placeholder' => 'Altura Max']) !!}
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="col-md-2">
-                                <label>Ancho Vereda</label>
-                                <select id="ancho_vereda" class="ancho_vereda" name="ancho_vereda" style="width:100%">
-                                    <option value="">Ancho</option>
-                                    <option value="-1.5 mts" {{ request()->ancho_vereda == '-1.5 mts' ? 'selected': ''}}>
-                                        -1.5 mts
-                                    </option>
-                                    <option value="+3.5 mts" {{ request()->ancho_vereda == '+3.5 mts' ? 'selected': ''}}>
-                                        +3.5 mts
-                                    </option>
-                                    <option value="1.5-3.5 mts" {{ request()->ancho_vereda == '1.5-3.5 mts' ? 'selected': ''}}>
-                                        1.5-3.5 mts
-                                    </option>
-                                </select>
+                            <div class="col-md-12">
+                                <button class="btn btn-sm btn-primary" style="margin-top: 25px;">Buscar</button>
+                                <a class="btn btn-sm btn-default" style="margin-top: 25px;"
+                                   href="{{url('/')}}">Limpiar</a>
                             </div>
-
-                            <div class="col-md-2">
-                                <label>Tipo Vereda</label>
-                                <select id="tipo_vereda" class="tipo_vereda" name="tipo_vereda" style="width:100%">
-                                    <option value="">Tipo</option>
-                                    <option value="Baldosa" {{ request()->tipo_vereda == 'Baldosa' ? 'selected': ''}}>
-                                        Baldosa
-                                    </option>
-                                    <option value="Tierra" {{ request()->tipo_vereda == 'Tierra' ? 'selected': ''}}>
-                                        Tierra
-                                    </option>
-                                    <option value="Tierra y cesped" {{ request()->tipo_vereda == 'Tierra y cesped' ? 'selected': ''}}>
-                                        Tierra y cesped
-                                    </option>
-
-                                    <option value="Tierra, cesped y baldosa" {{ request()->tipo_vereda == 'Tierra, cesped y baldosa' ? 'selected': ''}}>
-                                        Tierra, cesped y baldosa
-                                    </option>
-                                </select>
-                            </div>
-
-                            <button class="btn btn-sm btn-primary" style="margin-top: 25px;">Buscar</button>
-                            <a class="btn btn-sm btn-default" style="margin-top: 25px;" href="{{url('/')}}">Limpiar</a>
                         </form>
 
-
                         <table class="table">
-                            <caption style="text-align:right">
-                                <p><i class="fa fa-pencil" aria-hidden="true"></i> (Editar) | <i class="fa fa-eye"
-                                                                                                 aria-hidden="true"></i>
+                            <caption>
+                                <p>
+                                <h4 style="float: left;">Total de arboles filtrados: {{ $censos->total() }}</h4>
+                                <div style="float: right;">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i> (Editar) | <i class="fa fa-eye"
+                                                                                                  aria-hidden="true"></i>
                                     (Ver) | <i class="fa fa-check" aria-hidden="true"></i> (Aprobar)</p>
+                                </div>
                             </caption>
                             <thead>
                             <tr>
@@ -170,13 +207,26 @@
                             </tbody>
                         </table>
 
-                        {{ $censos->appends(['especie' => ''])->links() }}
+                        {{ $censos->links() }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <style type="text/css" media="screen">
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 35px;
+        }
+
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #ccd0d2;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 35px;
+        }
+
         .censo-bueno {
             color: green;
         }
@@ -189,7 +239,19 @@
             color: red;
         }
     </style>
+@endsection
+
+@section('scripts')
     <script type="text/javascript" charset="utf-8">
+
+        $(document).ready(function () {
+            $("#especies").select2();
+            $("#estado").select2();
+            $("#tamanio").select2();
+            $("#diametro").select2();
+            $("#ancho_vereda").select2();
+            $("#tipo_vereda").select2();
+        });
 
         function aprobarItem(id) {
 
@@ -225,16 +287,5 @@
                 }
             });
         }
-    </script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#especies").select2();
-            $("#estado").select2();
-            $("#tamanio").select2();
-            $("#diametro").select2();
-            $("#ancho_vereda").select2();
-            $("#tipo_vereda").select2();
-        });
     </script>
 @endsection

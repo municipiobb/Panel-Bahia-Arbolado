@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Support\Facades\DB;
+
 URL::forceRootUrl('http://arboladoapp.bahiablanca.gob.ar/');
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +20,63 @@ Event::listen('auth.login', function($event)
     Auth::user()->save();
 });
 */
+Route::get('/mapa_publico', function (){
+    $censos = App\Censo::where('status', App\Censo::APROBADO)->get();
+    $especies = App\Especie::orderBy('nombre')->pluck('nombre', 'id');
+    //$calles = \App\Calle::where('localidad_id', 1)->orderBy('nombre')->pluck('nombre', 'id');
+
+    $especies = DB::table('especies')
+        ->select('especies.id', 'especies.nombre', DB::raw('CONCAT(especies.nombre, " (",COUNT(especies.id), ")") AS especie'))
+        ->join('censos','censos.especie_id','=','especies.id')
+        ->where('censos.status', \App\Censo::APROBADO)
+        ->groupBy('especies.id', 'especies.nombre')
+        ->orderBy('nombre')
+        ->pluck('especie', 'id');
+
+    $calles = DB::table('calles')
+        ->select('calles.id', 'calles.nombre', DB::raw('CONCAT(calles.nombre, " (",COUNT(calles.id), ")") AS calle'))
+        ->join('censos','censos.calle_id','=','calles.id')
+        ->where('calles.localidad_id', 1)
+        ->where('censos.status', \App\Censo::APROBADO)
+        ->groupBy('calles.id', 'calles.nombre')
+        ->orderBy('nombre')
+        ->pluck('calle', 'id');
+
+
+    return view('mapa.publico', compact('censos', 'especies', 'calles'));
+});
+
+Route::get('/calles_c', function (){
+
+    $calles = DB::table('calles')
+        ->select('calles.id', 'calles.nombre')
+        ->leftJoin('censos','censos.calle_id','=','calles.id')
+        ->whereNotNull('censos.id')
+        ->orderBy('notes.created_at', 'desc')
+        ->get();
+
+    return $calles->groupBy('id');
+});
+
+Route::get('/calles_c1', function (){
+
+    $calles = DB::table('calles')
+        ->select('calles.id', 'calles.nombre', DB::raw('CONCAT(calles.nombre, " (",COUNT(calles.id), ")") AS calle'))
+        ->join('censos','censos.calle_id','=','calles.id')
+        ->where('calles.localidad_id', 1)
+        ->where('censos.status', \App\Censo::APROBADO)
+        ->groupBy('calles.id', 'calles.nombre')
+        ->orderBy('nombre')
+        ->pluck('calle', 'id');
+
+    return $calles;
+});
 
 Route::get('/', 'HomeController@index')->name('index');
 
 Route::resource('especies', 'EspeciesController');
 Route::resource('calles', 'CallesController');
+Route::resource('imagenes', 'ImagenesController');
 
 Route::resource('censos', 'CensosController');
 Route::put('censos/{id}/aprobar', 'CensosController@aprobar');
@@ -30,11 +84,28 @@ Route::delete('censos/imagen/{id}', 'CensosController@borrarImagen');
 
 Route::get('mapa', function(){
 	$censos = App\Censo::where('status', App\Censo::APROBADO)->get();
-	$especies = App\Especie::orderBy('nombre')->pluck('nombre', 'id');
+
+    $especies = DB::table('especies')
+        ->select('especies.id', 'especies.nombre')
+        ->join('censos','censos.especie_id','=','especies.id')
+        ->where('censos.status', \App\Censo::APROBADO)
+        ->groupBy('especies.id', 'especies.nombre')
+        ->orderBy('nombre')
+        ->pluck('nombre', 'id');
+
+    $calles = DB::table('calles')
+        ->select('calles.id', 'calles.nombre')
+        ->join('censos','censos.calle_id','=','calles.id')
+        ->where('calles.localidad_id', 1)
+        ->where('censos.status', \App\Censo::APROBADO)
+        ->groupBy('calles.id', 'calles.nombre')
+        ->orderBy('nombre')
+        ->pluck('nombre', 'id');
+
 	$estados = App\Acme\Constantes::getEstados();
 	$tamanios = App\Acme\Constantes::getTamanios();
 
-	return view('mapa.index2', compact('censos', 'especies', 'estados', 'tamanios'));
+	return view('mapa.index2', compact('censos', 'especies', 'estados', 'tamanios', 'calles'));
 });
 
 // Authentication Routes...
@@ -58,3 +129,10 @@ Route::get('line', function(){
 		's1' => 'sf'
 	];
 });
+
+Route::get('/reportes', function(){
+
+    $reportes = \App\AndroidLog::orderBy('created_at', 'DESC')->paginate(2);
+
+    return view('reportes', compact('reportes'));
+})->middleware('auth');

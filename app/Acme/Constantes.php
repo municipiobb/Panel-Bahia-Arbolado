@@ -21,8 +21,8 @@ class Constantes
 		return [
 		'1' => 'Bahía Blanca',
 		'2' => 'Cabildo',
-		'3' => 'Gral. Cerri',
-		'4' => 'Ing. White'
+		'3' => 'General Cerri',
+		'4' => 'Ingeniero White'
 		];
 	}
 

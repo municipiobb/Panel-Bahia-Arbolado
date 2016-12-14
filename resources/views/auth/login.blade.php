@@ -64,15 +64,15 @@
 
                         <div class="form-group">
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary" style="width:100%;font-size: 18px;border-radius: 0;">
+                                <button type="submit" class="btn btn-primary" style="width:100%;font-size: 18px;">
                                     Login
                                 </button>
-
-                                <a class="btn btn-link" href="{{ url('/password/reset') }}">
-                                    Forgot Your Password?
-                                </a>
                             </div>
                         </div>
+
+                        <a class="btn btn-link" href="{{ url('/password/reset') }}">
+                            ¿Olvidaste tu contraseña?
+                        </a>
                     </form>
                 </div>
             </div>
