@@ -84,6 +84,7 @@ class CensosController extends Controller
         $tipos_vereda = Constantes::getTipoVereda();
         $canteros = Constantes::getCantero();
         $tamanios = Constantes::getTamanios();
+
         $calles = Calle::pluck('nombre', 'id');
 
         $localidades = Constantes::getLocalidades();
@@ -95,7 +96,7 @@ class CensosController extends Controller
     {
         /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
-        $calle = Calle::findOrFail($request->calle_id)->nombre;
+        $calle = Calle::findOrFail(request('calle_id'))->nombre;
 
         /**
          *  Obtener latitud y longitud de google maps.
@@ -151,7 +152,10 @@ class CensosController extends Controller
 
         $res = Storage::disk('public')->delete($imagen->url);
 
-        return response()->json(['success' => 1, 'flash' => 'Imagen Borrada.']);
+        return response()->json([
+            'success' => 1,
+            'flash' => 'Imagen Borrada.'
+        ]);
     }
 
     public function destroy($id)
