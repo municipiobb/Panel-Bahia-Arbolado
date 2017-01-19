@@ -14,7 +14,7 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- Add fancyBox -->
-    <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ asset('lib/fancybox/jquery.fancybox.css?v=2.1.5')}}" type="text/css" media="screen" />
     <script src="{{ asset('js/bootbox.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <!-- Styles -->
@@ -90,10 +90,10 @@
                     <!-- Left Side Of Navbar -->
                     @if (!Auth::guest())
                     <ul class="nav navbar-nav">
-
+                        <li><a href="{{ action('CensosController@index') }}" {{ Request::is('censos') ? 'class=active' : '' }}>Censos</a></li>
                         <li><a href="{{ action('EspeciesController@index') }}" {{ Request::is('especies') ? 'class=active' : '' }}>Especies</a></li>
                         <li><a href="{{ action('CallesController@index') }}" {{ Request::is('calles') ? 'class=active' : '' }}>Calles</a></li>
-                        <li><a href="{{ action('ImagenesController@index') }}" {{ Request::is('imagenes') ? 'class=active' : '' }}>Imagenes</a></li>
+                        <li><a href="{{ action('ImagenesController@index') }}" {{ Request::is('imagenes') ? 'class=active' : '' }}>Imágenes</a></li>
                         <li><a href="{{ url('mapa') }}" {{ Request::is('mapa') ? 'class=active' : '' }}>Mapa</a></li>
 
                         <!-- <li class="dropdown">

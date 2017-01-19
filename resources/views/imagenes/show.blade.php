@@ -7,7 +7,7 @@
 		<div class="col-md-6">
 			<div class="row">
 				<div class="col-md12">
-					<h3>Datos del arbol</h3>
+					<h3>Datos del árbol</h3>
 					<p><label>Especie:</label> {{ $arbol->especie->nombre }}</p>
 					<p><label>Estado:</label> {{ $arbol->estado }}</p>
 					<p><label>Tamaño:</label> {{ $arbol->tamanio }}</p>
@@ -37,7 +37,7 @@
 
 	</div>
 	<div class="row">
-			<h3>Fotos del arbol</h3>
+			<h3>Fotos del árbol</h3>
 			@foreach($arbol->imagenes as $imagen)
 			<a class="fancybox" rel="group" href="{{ url($imagen->url) }}"><img src="{{ url($imagen->url) }}" alt="" /></a>
 			@endforeach
@@ -90,7 +90,7 @@
 		var marker = new google.maps.Marker({
 			position: myLatLng,
 			map: map,
-			title: 'Arbol: {{ $arbol->especie->nombre}}',
+			title: 'Árbol: {{ $arbol->especie->nombre}}',
 			icon: icon
 		});
 	}

@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Facades\DB;
 
-URL::forceRootUrl('http://arboladoapp.bahiablanca.gob.ar/');
+URL::forceRootUrl(env('APP_URL'));
 /*
 |--------------------------------------------------------------------------
 | Web Routes

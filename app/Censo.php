@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @property int especie_id
@@ -16,6 +16,10 @@ use Illuminate\Database\Eloquent\Model;
 class Censo extends Model
 {
 	const APROBADO = 1;
+
+	const ESTADO_BUENO = 'Bueno';
+	const ESTADO_REGULAR = 'Regular';
+	const ESTADO_MALO = 'Malo';
 
 	protected $table = 'censos';
 
