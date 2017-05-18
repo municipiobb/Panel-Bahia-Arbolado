@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * @property int admin
+ */
 class User extends Authenticatable
 {
   use Notifiable;
@@ -29,4 +32,11 @@ class User extends Authenticatable
     'password',
     'remember_token'
   ];
+
+    /**
+     * @return int
+     */
+    public function isAdmin(){
+      return $this->admin;
+  }
 }

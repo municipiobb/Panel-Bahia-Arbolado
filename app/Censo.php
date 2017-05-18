@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
+ * @property int id
  * @property int especie_id
  * @property string nombre
- * @property  int lat
- * @property  int long
+ * @property int lat
+ * @property int long
  * @property int status
  * @property Collection imagenes
  */

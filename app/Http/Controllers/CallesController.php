@@ -51,6 +51,12 @@ class CallesController extends Controller
      */
     public function store(CalleRequest $request)
     {
+
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para crear un nuevo registro.', 'warning');
+            return response()->redirectTo('calles');
+        }
+
         $calle = Calle::create($request->all());
 
         if($calle)
@@ -81,6 +87,11 @@ class CallesController extends Controller
      */
     public function update(CalleRequest $request, $id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para actualizar el registro.', 'warning');
+            return response()->redirectTo('calles');
+        }
+
         $calle = Calle::find($id)->update($request->all());
 
         if($calle)
@@ -97,6 +108,10 @@ class CallesController extends Controller
      */
     public function destroy($id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para eliminar el registro.', 'warning');
+            return redirect()->route('index');
+        }
         /** @var Censo $calle */
         $calle = Calle::find($id);
 

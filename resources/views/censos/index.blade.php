@@ -181,24 +181,40 @@
                                     <td>{{ $censo->imagenes()->count() }}</td>
                                     <td>{{ $censo->created_at->format('d-m-Y H:i')}}</td>
                                     <td>
-                                        <a href="{{ action('CensosController@edit', $censo->id) }}" title="Editar"
-                                           style="font-size: 18px; color: #00c2ff;">
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                        </a>
-                                        <a href="{{ action('CensosController@show', $censo->id) }}" title="Ver"
-                                           style="font-size: 18px; color: #ff9b00;">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </a>
-                                        <a id="borrar-{{$censo->id}}" href="#" style="font-size: 18px; color: #ef0000;"
-                                           title="Borrar" onclick="borrarItem({{ $censo->id }})">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                        </a>
-                                        @if(!$censo->status)
-                                            <a id="aprobar-{{$censo->id}}" href="#"
-                                               style="font-size: 18px; color: green;" title="Aprobar"
-                                               onclick="aprobarItem({{ $censo->id }})">
-                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                        @if(!auth()->user()->isAdmin())
+                                            <a href="javascript:void(0)" title="Editar"
+                                               style="font-size: 18px; color: silver;">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
                                             </a>
+                                            <a href="javascript:void(0)" title="Ver"
+                                               style="font-size: 18px; color: silver;">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="javascript:void(0)" style="font-size: 18px; color: silver;"
+                                               title="Borrar">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ action('CensosController@edit', $censo->id) }}" title="Editar"
+                                               style="font-size: 18px; color: #00c2ff;">
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="{{ action('CensosController@show', $censo->id) }}" title="Ver"
+                                               style="font-size: 18px; color: #ff9b00;">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                            <a id="borrar-{{$censo->id}}" href="#"
+                                               style="font-size: 18px; color: #ef0000;"
+                                               title="Borrar" onclick="borrarItem({{ $censo->id }})">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                            @if(!$censo->status)
+                                                <a id="aprobar-{{$censo->id}}" href="#"
+                                                   style="font-size: 18px; color: green;" title="Aprobar"
+                                                   onclick="aprobarItem({{ $censo->id }})">
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
@@ -240,45 +256,61 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" charset="utf-8">
 
-        $(document).ready(function () {
-            $("#especies").select2();
-            $("#estado").select2();
-            $("#tamanio").select2();
-            $("#diametro").select2();
-            $("#ancho_vereda").select2();
-            $("#tipo_vereda").select2();
-        });
+    @if(!auth()->user()->isAdmin())
+        <script type="text/javascript" charset="utf-8">
 
-        function aprobarItem(id) {
-
-            bootbox.confirm("Desea aprobar el registro N° " + id + " ?", function (result) {
-                if (result) {
-                    $.ajax({
-                        type: "PUT",
-                        url: "{{ url('censos') }}/" + id + "/aprobar",
-                        success: function () {
-                            $('#aprobar-' + id).remove();
-                        },
-                        data: {_token: window.Laravel.csrfToken}
-                    });
-                }
+            $(document).ready(function () {
+                $("#especies").select2();
+                $("#estado").select2();
+                $("#tamanio").select2();
+                $("#diametro").select2();
+                $("#ancho_vereda").select2();
+                $("#tipo_vereda").select2();
             });
-        }
-        function borrarItem(id) {
-            bootbox.confirm("Desea eliminar el registro N° " + id + " ?", function (result) {
-                if (result) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: "{{ url('censos') }}/" + id,
-                        success: function () {
-                            $('#row-' + id).remove();
-                        },
-                        data: {_token: window.Laravel.csrfToken}
-                    });
-                }
+        </script>
+    @else
+        <script type="text/javascript" charset="utf-8">
+
+            $(document).ready(function () {
+                $("#especies").select2();
+                $("#estado").select2();
+                $("#tamanio").select2();
+                $("#diametro").select2();
+                $("#ancho_vereda").select2();
+                $("#tipo_vereda").select2();
             });
-        }
-    </script>
+
+
+            function aprobarItem(id) {
+
+                bootbox.confirm("Desea aprobar el registro N° " + id + " ?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "PUT",
+                            url: "{{ url('censos') }}/" + id + "/aprobar",
+                            success: function () {
+                                $('#aprobar-' + id).remove();
+                            },
+                            data: {_token: window.Laravel.csrfToken}
+                        });
+                    }
+                });
+            }
+            function borrarItem(id) {
+                bootbox.confirm("Desea eliminar el registro N° " + id + " ?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{ url('censos') }}/" + id,
+                            success: function () {
+                                $('#row-' + id).remove();
+                            },
+                            data: {_token: window.Laravel.csrfToken}
+                        });
+                    }
+                });
+            }
+        </script>
+    @endif
 @endsection

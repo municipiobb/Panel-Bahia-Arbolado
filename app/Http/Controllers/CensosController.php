@@ -14,6 +14,7 @@ use App\Acme\Constantes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Prophecy\Call\Call;
 
 class CensosController extends Controller
 {
@@ -72,24 +73,10 @@ class CensosController extends Controller
 
         $censos = $censos->paginate(15);
 
-        $especies = DB::table('especies')
-            ->select('especies.id', 'especies.nombre')
-            ->join('censos','censos.especie_id','=','especies.id')
-            ->where('censos.status', Censo::APROBADO)
-            ->groupBy('especies.id', 'especies.nombre')
-            ->orderBy('nombre')
-            ->pluck('nombre', 'id');
+        $especies = Especie::getDropDown();
 
-        $calles = DB::table('calles')
-            ->select('calles.id', 'calles.nombre')
-            ->join('censos','censos.calle_id','=','calles.id')
-            ->where('calles.localidad_id', 1)
-            ->where('censos.status', Censo::APROBADO)
-            ->groupBy('calles.id', 'calles.nombre')
-            ->orderBy('nombre')
-            ->pluck('nombre', 'id');
+        $calles = Calle::getDropDown();
 
-        //return view('home', compact('censos', 'especies', 'calles'));
         return view('censos.index', compact('censos', 'especies', 'calles'));
     }
 
@@ -156,6 +143,11 @@ class CensosController extends Controller
 
     public function update(Request $request, $id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para actualizar el registro.', 'warning');
+            return redirect()->route('index');
+        }
+
         /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
         $calle = Calle::findOrFail(request('calle_id'))->nombre;
@@ -222,6 +214,11 @@ class CensosController extends Controller
 
     public function destroy($id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para eliminar el registro.', 'warning');
+            return redirect()->route('index');
+        }
+
         /** @var Censo $censo */
         $censo = Censo::findOrFail($id);
 

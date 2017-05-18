@@ -25,6 +25,11 @@ class ImagenesController extends Controller
 
     public function update(Request $request, $id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para actualizar el registro.', 'warning');
+            return redirect()->route('index');
+        }
+
         $imagen = Imagen::findOrFail($id);
 
         $url = $imagen->url;
@@ -76,6 +81,11 @@ class ImagenesController extends Controller
      */
     public function destroy($id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para eliminar el registro.', 'warning');
+            return redirect()->route('index');
+        }
+
         /** @var Imagen $imagen */
         $imagen = Imagen::findOrFail($id);
 

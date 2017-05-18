@@ -59,13 +59,6 @@ class ApiController extends Controller
         $validator = Validator::make(
             $arbol,
             [
-                //'especie_id' => 'required|exists:especies,id',
-                //'estado' => 'required',
-                //'tamanio' => 'required',
-                //'diametro_tronco' => 'required',
-                //'ancho_vereda' => 'required',
-                //'tipo_vereda' => 'required',
-                //'cantero' => 'required',
                 'localidad_id' => 'required',
                 'calle_id' => 'required',
                 'direccion' => 'required',
@@ -91,8 +84,6 @@ class ApiController extends Controller
         );
         $cxContext = stream_context_create($aContext);
 
-        //$sFile = file_get_contents("http://www.google.com", False, $cxContext);
-
         $address = $arbol['direccion'] . '+' . $arbol['altura'] . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
         $prepAddr = str_replace(' ', '+', $address);
         $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
@@ -103,6 +94,7 @@ class ApiController extends Controller
 
         $nextCenso = Censo::where('direccion', $arbol['direccion'])->where('altura', $arbol['altura'])->count();
 
+        /** @var Censo $model */
         $model = Censo::create($arbol);
 
         if ( $model )
@@ -138,8 +130,14 @@ class ApiController extends Controller
             ]);
         }
 
-        $imagen = $request->get('imagen');
+        if($arbol->imagenes()->where('imagen_id', request('imagen_id'))->first()){
+            return response()->json([
+                'success' => 1,
+                'flash' => 'La imagen ya existe.'
+            ]);
+        }
 
+        $imagen = $request->get('imagen');
 
         if ( $imagen ) {
 
@@ -164,6 +162,7 @@ class ApiController extends Controller
             $img->save($path);
 
             $aux = $arbol->imagenes()->create([
+                'imagen_id' => $request->get('imagen_id'),
                 'nombre' => $filename,
                 'url' => $relative_path,
                 'imagen' => ''

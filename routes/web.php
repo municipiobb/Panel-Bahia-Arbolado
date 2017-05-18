@@ -120,7 +120,13 @@ Route::post('logout', 'Auth\LoginController@logout');
 Route::get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('password/email', 'Auth\ResetPasswordController@sendResetLinkEmail');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
+Route::get('password/change', 'Auth\ChangePasswordController@index');
+Route::post('password/change', 'Auth\ChangePasswordController@change');
 //Auth::routes();
+
+Route::get('usuarios', 'UsuariosController@index');
+Route::get('usuarios/{usuario}', 'UsuariosController@show');
 
 Route::get('line', function(){
 	$data = [

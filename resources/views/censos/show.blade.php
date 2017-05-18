@@ -8,19 +8,21 @@
                 <div class="row">
                     <div class="panel col-md-12" style="background: #f7f7f7;">
                         <h3>Datos del censo
-                            <span style="float: right;">
+                            @if(auth()->user()->isAdmin())
+                                <span style="float: right;">
                                 <a id="borrar-{{$censo->id}}" href="#" style="font-size: 18px; color: #ef0000;"
                                    title="Borrar" onclick="borrarItem({{ $censo->id }})">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                 </a>
-                                @if(!$censo->status)
-                                    <a id="aprobar-{{$censo->id}}" href="#"
-                                       style="font-size: 18px; color: green;" title="Aprobar"
-                                       onclick="aprobarItem({{ $censo->id }})">
+                                    @if(!$censo->status)
+                                        <a id="aprobar-{{$censo->id}}" href="#"
+                                           style="font-size: 18px; color: green;" title="Aprobar"
+                                           onclick="aprobarItem({{ $censo->id }})">
                                         <i class="fa fa-check" aria-hidden="true"></i>
                                     </a>
-                                @endif
+                                    @endif
                             </span>
+                            @endif
                         </h3>
                         <p><label>Especie:</label> {{ $censo->especie->nombre }}</p>
                         <p><label>Estado:</label> {{ $censo->estado }}</p>
@@ -93,6 +95,8 @@
 @endsection
 
 @section('scripts')
+
+
     <script type="text/javascript" charset="utf-8">
 
         $(document).ready(function () {
@@ -132,6 +136,7 @@
 
         window.onload = loadScript;
 
+        @if(auth()->user()->isAdmin())
         function aprobarItem(id) {
 
             bootbox.confirm("Desea aprobar el registro N° " + id + " ?", function (result) {
@@ -166,6 +171,8 @@
                 }
             });
         }
+        @endif
     </script>
+
 
 @endsection

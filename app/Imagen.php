@@ -13,7 +13,8 @@ class Imagen extends Model
 
     protected $fillable = [
     	'url',
-    	'imagen'
+    	'imagen',
+        'imagen_id'
     ];
 
     public function censo(){

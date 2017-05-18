@@ -49,6 +49,11 @@ class EspeciesController extends Controller
 
     public function store(EspecieRequest $request)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para crear un nuevo registro.', 'warning');
+            return response()->redirectTo('calles');
+        }
+
         if ( Especie::create($request->all()) ) {
             flash('Especie Creada.', 'success');
         } else {
@@ -66,6 +71,11 @@ class EspeciesController extends Controller
 
     public function update(EspecieRequest $request, $id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para editar el nuevo registro.', 'warning');
+            return response()->redirectTo('calles');
+        }
+
         $especie = Especie::findOrFail($id);
 
         $especie->update($request->all());
@@ -78,6 +88,11 @@ class EspeciesController extends Controller
 
     public function destroy($id)
     {
+        if(!auth()->user()->isAdmin()) {
+            flash('No tiene permiso para eliminar el registro.', 'warning');
+            return redirect()->route('index');
+        }
+
         $especie = Especie::findOrFail($id);
 
         $especie->delete();

@@ -10,6 +10,16 @@ class Especie extends Model
     	'nombre'
     ];
 
+    public static function getDropDown()
+    {
+        return static::query()->whereHas('censos', function ($query){
+            $query->where('status', Censo::APROBADO);
+        })->pluck('nombre', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function censos(){
         return $this->hasMany(Censo::class);
     }
@@ -20,7 +30,7 @@ class Especie extends Model
     }
 
     public function hasCensos(){
-    	if($this->censos()->count())
+    	if($this->has('censos')->count())
     		return true;
     	else
     		return false;

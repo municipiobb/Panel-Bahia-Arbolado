@@ -1,7 +1,6 @@
 <?php
 
 use App\User;
-use App\Especie;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,39 +15,39 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
 
         User::create([
-        	'name' => 'Javier',
-        	'email' => 'jacancli@gmail.com',
-        	'password' => Hash::make('javier123')
-            ]);
+            'name' => 'Javier',
+            'email' => 'jacancli@gmail.com',
+            'password' => Hash::make('javier123')
+        ]);
 
         User::create([
             'name' => 'Elena',
             'email' => 'elenadiaz@bahiablanca.gov.ar',
             'password' => Hash::make('pwelena.16')
-            ]);
+        ]);
 
-      User::create([
+        User::create([
             'name' => 'Erica',
             'email' => 'ericagutierrez@yahoo.com.ar',
             'password' => Hash::make('pwerica.16')
-            ]);
+        ]);
 
         DB::table('especies')->insert([
             [
-            'nombre' => 'Otras', 
-            'created_at'=>\Carbon\Carbon::now(), 
-            'updated_at'=>\Carbon\Carbon::now()
+                'nombre' => 'Otras',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
             ],
             ['nombre' => 'Laurel',
-            'created_at'=>\Carbon\Carbon::now(),
-            'updated_at'=>\Carbon\Carbon::now()
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
             ],
             [
-            'nombre' => 'Eucaliptus',
-            'created_at'=>\Carbon\Carbon::now(),
-            'updated_at'=>\Carbon\Carbon::now()
+                'nombre' => 'Eucaliptus',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
             ]
-            ]);
+        ]);
 
         DB::table('calles')->insert([
             ['nombre' => '1 DE MARZO'],
@@ -983,6 +982,6 @@ class DatabaseSeeder extends Seeder
             ['nombre' => 'ZAPIOLA'],
             ['nombre' => 'ZAPIOLA'],
             ['nombre' => 'ZELARRAYAN']
-            ]);
-}
+        ]);
+    }
 }
