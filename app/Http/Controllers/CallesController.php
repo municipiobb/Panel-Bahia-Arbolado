@@ -10,7 +10,6 @@ use App\Http\Requests\CalleRequest;
 
 class CallesController extends Controller
 {
-
     /**
      * Create a new controller instance.
      *
@@ -23,13 +22,15 @@ class CallesController extends Controller
     public function index(Request $request)
     {
         /** @var Calle $calles */
+        $calles = Calle::query();
+
         if ( $request->has('q') ) {
-            $calles = Calle::where('nombre', 'LIKE', '%' . $request->get('q') . '%')->paginate(20);
-        } else {
-            $calles = Calle::paginate(20);
+            $calles = $calles->where('nombre', 'LIKE', '%' . $request->get('q') . '%');
         }
 
-        $calles->setPath('http://arboladoapp.bahiablanca.gob.ar/calles');
+        $calles = $calles->paginate(20);
+
+        $calles->setPath(url('calles'));
 
         return view('calles.index', compact('calles'));
     }
@@ -39,7 +40,6 @@ class CallesController extends Controller
      */
     public function create()
     {
-
         $localidades = Constantes::getLocalidades();
 
         return view('calles.create', compact('localidades'));
@@ -51,7 +51,6 @@ class CallesController extends Controller
      */
     public function store(CalleRequest $request)
     {
-
         if(!auth()->user()->isAdmin()) {
             flash('No tiene permiso para crear un nuevo registro.', 'warning');
             return response()->redirectTo('calles');
@@ -112,10 +111,13 @@ class CallesController extends Controller
             flash('No tiene permiso para eliminar el registro.', 'warning');
             return redirect()->route('index');
         }
-        /** @var Censo $calle */
+        /** @var Calle $calle */
         $calle = Calle::find($id);
 
-        if ( Censo::where('direccion', $calle->nombre)->count() == 0 ) {
+        /**
+         * Solo se permite borrar una calle si esta no tiene censos asociados
+         */
+        if ( !$calle->hasCensos() ) {
             if ( $calle->delete() ) {
                 return response()->json([
                     'success' => 1,

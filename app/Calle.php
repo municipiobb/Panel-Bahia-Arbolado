@@ -25,4 +25,11 @@ class Calle extends Model
     public function censos(){
         return $this->hasMany(Censo::class);
     }
+
+    public function hasCensos(){
+        if($this->censos()->count())
+            return true;
+        else
+            return false;
+    }
 }

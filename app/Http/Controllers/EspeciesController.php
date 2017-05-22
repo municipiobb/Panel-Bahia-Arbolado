@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Especie;
-use App\Http\Requests;
 use App\Http\Requests\EspecieRequest;
 
 class EspeciesController extends Controller
@@ -31,7 +30,7 @@ class EspeciesController extends Controller
     {
         $data = [];
         if ( $date ) {
-            if ( Especie::where('updated_at', '>', Carbon::createFromFormat('d-m-Y H:i:s', $date))->count() )
+            if ( Especie::where('updated_at', '>', Carbon::createFromFormat('d-m-Y H:i:s', $date)->startOfDay())->count() )
                 $data = Especie::get(['id', 'nombre', 'updated_at']);
         } else {
             $data = Especie::get(['id', 'nombre']);

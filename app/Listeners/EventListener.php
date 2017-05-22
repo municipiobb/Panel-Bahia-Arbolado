@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Acme\Helpers;
+use App\LoginTrack;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,13 +23,13 @@ class EventListener
     /**
      * Handle the event.
      *
-     * @param  Login $user
+     * @param Login $event
      * @return void
      */
     public function handle(Login $event)
     {
-        \App\LoginTrack::create([
-            'ip' => request()->ip(),
+        LoginTrack::create([
+            'ip' => Helpers::obtenerIP(),
             'user_id' => $event->user->id
         ]);
     }

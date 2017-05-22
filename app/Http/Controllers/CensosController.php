@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
-use Illuminate\Support\Facades\DB;
 use Image;
 use App\Censo;
 use App\Calle;
@@ -14,7 +12,6 @@ use App\Acme\Constantes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Prophecy\Call\Call;
 
 class CensosController extends Controller
 {
@@ -42,7 +39,7 @@ class CensosController extends Controller
         $altura_max = request('altura_max');
 
         /** @var Censo $censos */
-        $censos = Censo::orderBy('id', 'desc');
+        $censos = Censo::query();
 
         if($especie_id)
             $censos = $censos->where('especie_id', $especie_id);
@@ -71,7 +68,7 @@ class CensosController extends Controller
         if ( $altura_max )
             $censos = $censos->where('altura', '<=', $altura_max);
 
-        $censos = $censos->paginate(15);
+        $censos = $censos->orderBy('id', 'desc')->paginate(15);
 
         $especies = Especie::getDropDown();
 
@@ -163,15 +160,13 @@ class CensosController extends Controller
 
         $cxContext = stream_context_create($aContext);
 
-        //$sFile = file_get_contents("http://www.google.com", False, $cxContext);
-
-        $address = $calle . '+' . $request->altura . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
+        $address = $calle . '+' . $request->get('altura') . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
         $prepAddr = str_replace(' ', '+', $address);
         $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
         $output = json_decode($geocode);
+
         $censo->lat = $output->results[0]->geometry->location->lat;
         $censo->long = $output->results[0]->geometry->location->lng;
-
 
         if ( $censo->update($request->all()) )
             flash('Censo actualizado!', 'success');
@@ -195,7 +190,10 @@ class CensosController extends Controller
         $censo->status = Censo::APROBADO;
         $censo->save();
 
-        return response()->json(['success' => 1, 'flash' => 'Censo Aprobado']);
+        return response()->json([
+            'success' => 1,
+            'flash' => 'Censo Aprobado'
+        ]);
     }
 
     public function borrarImagen($id)
@@ -229,7 +227,11 @@ class CensosController extends Controller
         }
 
         $censo->delete();
-        return response()->json(['success' => 1, 'flash' => 'Censo Borrado.']);
+
+        return response()->json([
+            'success' => 1,
+            'flash' => 'Censo Borrado.'
+        ]);
     }
 
     /**
@@ -265,22 +267,4 @@ class CensosController extends Controller
             return response()->json([]);
         }
     }
-    /*
-    public function saveImage2(Request $request){
-        $file = $request->file('avatar');
-
-        $path = $file->hashName('avatars');
-        // avatars/bf5db5c75904dac712aea27d45320403.jpeg
-
-        $image = Image::make($file);
-
-        $image->fit(250, 250, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-
-        Storage::put($path, (string) $image->encode());
-
-        return response()->json(['path'=>$path]);
-
-    }*/
 }

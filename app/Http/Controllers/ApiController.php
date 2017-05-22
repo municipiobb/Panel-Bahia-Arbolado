@@ -14,7 +14,6 @@ class ApiController extends Controller
 
     public function getFormData()
     {
-
         $especies = Especie::pluck('nombre', 'id');
 
         $res = [
@@ -27,29 +26,6 @@ class ApiController extends Controller
         ];
 
         return response()->json($res);
-    }
-
-    public function getAll(Request $request)
-    {
-
-        $especie = $request->especie;
-        $estado = $request->estado;
-        $tamanio = $request->tamanio;
-
-        $censos = Censo::orderBy('id');
-
-        if ( $especie )
-            $censos = $censos->where('especie_id', $especie);
-
-        if ( $estado )
-            $censos = $censos->where('estado', $estado);
-
-        if ( $tamanio )
-            $censos = $censos->where('tamanio', $tamanio);
-
-        $censos = Censo::where('status', 1)->with(['imagenes', 'especie'])->get();
-
-        return response()->json(['data' => $censos]);
     }
 
     public function saveCenso(Request $request)
@@ -90,9 +66,6 @@ class ApiController extends Controller
         $output = json_decode($geocode);
         $arbol['lat'] = $output->results[0]->geometry->location->lat;
         $arbol['long'] = $output->results[0]->geometry->location->lng;
-
-
-        $nextCenso = Censo::where('direccion', $arbol['direccion'])->where('altura', $arbol['altura'])->count();
 
         /** @var Censo $model */
         $model = Censo::create($arbol);

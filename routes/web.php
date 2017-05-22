@@ -2,28 +2,9 @@
 use Illuminate\Support\Facades\DB;
 
 URL::forceRootUrl(env('APP_URL'));
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| This file is where you may define all of the routes that are handled
-| by your application. Just tell Laravel the URIs it should respond
-| to using a Closure or controller method. Build something great!
-|
-*/
-/*
-Event::listen('auth.login', function($event)
-{
-    Auth::user()->last_login = new DateTime;
-    Auth::user()->last_login_ip = Request::getClientIp();
-    Auth::user()->save();
-});
-*/
+
 Route::get('/mapa_publico', function (){
     $censos = App\Censo::where('status', App\Censo::APROBADO)->get();
-    $especies = App\Especie::orderBy('nombre')->pluck('nombre', 'id');
-    //$calles = \App\Calle::where('localidad_id', 1)->orderBy('nombre')->pluck('nombre', 'id');
 
     $especies = DB::table('especies')
         ->select('especies.id', 'especies.nombre', DB::raw('CONCAT(especies.nombre, " (",COUNT(especies.id), ")") AS especie'))

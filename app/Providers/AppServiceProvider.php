@@ -22,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
 
             return true;
         });
-        //Form::component('bsText', 'components.form.text', ['name', 'value' => null, 'attributes' => []]);
     }
 
     /**

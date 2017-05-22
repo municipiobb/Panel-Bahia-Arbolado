@@ -33,7 +33,7 @@ class ChangePasswordController extends Controller
 
         if(! Hash::check($request->get('current_pwd'), auth()->user()->getAuthPassword())) {
             flash('La contraseña actual es incorrecta', 'danger');
-            return back();//->withErrors('current_pws', 'La contraseña actual es incorrecta');
+            return back();
         }
 
         $this->resetPassword(auth()->user(), $request->get('password'));

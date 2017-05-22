@@ -30,7 +30,7 @@ class Especie extends Model
     }
 
     public function hasCensos(){
-    	if($this->has('censos')->count())
+    	if($this->censos()->count())
     		return true;
     	else
     		return false;

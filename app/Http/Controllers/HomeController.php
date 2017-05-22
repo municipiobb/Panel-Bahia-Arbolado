@@ -25,8 +25,6 @@ class HomeController extends Controller
     {
         $censos = Censo::all();
 
-        //$barras = Censo::groupBy('especie_id')->select('nombre')->limit(15)->get();
-
         $bars = Censo::join('especies', 'censos.especie_id', '=', 'especies.id')
             ->select('especies.id', 'especies.nombre', DB::raw('COUNT(censos.especie_id) as total'))
             ->groupBy('especies.id', 'censos.especie_id', 'especies.nombre')

@@ -2,13 +2,8 @@
 
 namespace App\Acme;
 
-/**
-* 
-*/
 class Constantes
 {
-
-
 	public static function getTamanios(){
 		return [
 		'Chico' => 'Chico',
