@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Image;
 use App\Censo;
 use Validator;
@@ -42,13 +43,12 @@ class ApiController extends Controller
             ]
         );
 
-        if ( $validator->fails() ) {
+        if ($validator->fails()) {
             return [
                 "estado" => 0,
                 "mensaje" => $validator->errors()
             ];
         }
-
 
         /**
          *  Obtener latitud y longitud de google maps.
@@ -58,19 +58,25 @@ class ApiController extends Controller
                 'proxy' => '10.240.3.8:3128'
             ),
         );
+
         $cxContext = stream_context_create($aContext);
 
         $address = $arbol['direccion'] . '+' . $arbol['altura'] . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
         $prepAddr = str_replace(' ', '+', $address);
         $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
         $output = json_decode($geocode);
-        $arbol['lat'] = $output->results[0]->geometry->location->lat;
-        $arbol['long'] = $output->results[0]->geometry->location->lng;
+        if ($output->status != 'ZERO_RESULTS') {
+            $arbol['lat'] = $output->results[0]->geometry->location->lat;
+            $arbol['long'] = $output->results[0]->geometry->location->lng;
+        } else {
+            $arbol['lat'] = 0;
+            $arbol['long'] = 0;
+        }
 
         /** @var Censo $model */
         $model = Censo::create($arbol);
 
-        if ( $model )
+        if ($model)
             return response()->json([
                 'success' => 1,
                 'arbol_id' => $model->id,
@@ -96,14 +102,14 @@ class ApiController extends Controller
         /** @var Censo $arbol */
         $arbol = Censo::find($id_arbol);
 
-        if ( ! $arbol ) {
+        if (!$arbol) {
             return response()->json([
                 'success' => 0,
                 'flash' => 'El censo no existe'
             ]);
         }
 
-        if($arbol->imagenes()->where('imagen_id', request('imagen_id'))->first()){
+        if ($arbol->imagenes()->where('imagen_id', request('imagen_id'))->first()) {
             return response()->json([
                 'success' => 1,
                 'flash' => 'La imagen ya existe.'
@@ -112,7 +118,7 @@ class ApiController extends Controller
 
         $imagen = $request->get('imagen');
 
-        if ( $imagen ) {
+        if ($imagen) {
 
             $filename = 'imagen_arbolado_' . time() . '_' . rand() . '.jpg';
 
@@ -122,7 +128,7 @@ class ApiController extends Controller
 
             $img = Image::make(base64_decode($imagen));
 
-            if ( $img->height() > $img->width() ) {
+            if ($img->height() > $img->width()) {
                 $img->resize(400, null, function ($constraint) {
                     $constraint->aspectRatio();
                 });
@@ -141,7 +147,7 @@ class ApiController extends Controller
                 'imagen' => ''
             ]);
 
-            if ( $aux )
+            if ($aux)
                 return response()->json([
                     'success' => 1,
                     'imagen' => $aux
@@ -156,5 +162,35 @@ class ApiController extends Controller
                 'success' => 0,
                 'imagen' => null
             ]);
+    }
+
+    public function getAll()
+    {
+        $censos = DB::table('censos AS c')
+            ->join('calles', 'calles.id', '=', 'c.calle_id')
+            ->join('especies', 'especies.id', '=', 'c.especie_id')
+            ->select(
+                'especies.nombre AS especie',
+                'c.estado',
+                'c.tamanio',
+                'c.diametro_tronco',
+                'ancho_vereda',
+                'tipo_vereda',
+                'cantero',
+                'direccion',
+                'altura',
+                'lat',
+                'long'
+            )
+            ->get();
+        /*
+        $censos = Censo::query()
+            ->with('calle')
+            ->with('especie')
+            ->select('censos.id', 'censos.estado', 'censos.estado')
+            ->get();
+        */
+
+        return json_encode($censos);
     }
 }

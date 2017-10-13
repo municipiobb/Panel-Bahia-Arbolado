@@ -35,6 +35,7 @@ Route::get('/especies/{date?}', 'EspeciesController@getAll');
 Route::get('/getFormData', 'ApiController@getFormData');
 
 Route::get('/censos', 'ApiController@getAll');
+Route::get('/censos.php', 'ApiController@getAll');
 Route::post('/censo', 'ApiController@saveCenso');
 Route::post('/censo/{id}/imagenes', 'ApiController@saveImagen');
 

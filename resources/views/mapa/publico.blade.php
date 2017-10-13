@@ -99,6 +99,13 @@
             height: 28px;
             padding: 2px 4px;
         }
+
+        .logo {
+            position: absolute;
+            bottom: 30px;
+            left: 5px;
+            z-index: 1000;
+        }
     </style>
     <!-- Scripts -->
     <script>
@@ -143,6 +150,12 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <div class="logo">
+        <a href="http://datos.bahiablanca.gob.ar/dataviews/239357/arbolado-bahia-blanca/" target="_blank">
+            <img src="{{ asset('images/datos-bahia.png') }}" alt="">
+        </a>
     </div>
     <div id="map" style="width:100%;"></div>
 </div>

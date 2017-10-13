@@ -41,31 +41,31 @@ class CensosController extends Controller
         /** @var Censo $censos */
         $censos = Censo::query();
 
-        if($especie_id)
+        if ($especie_id)
             $censos = $censos->where('especie_id', $especie_id);
 
-        if($estado)
+        if ($estado)
             $censos = $censos->where('estado', $estado);
 
-        if($tamanio)
+        if ($tamanio)
             $censos = $censos->where('tamanio', $tamanio);
 
-        if($diametro)
+        if ($diametro)
             $censos = $censos->where('diametro_tronco', $diametro);
 
-        if($ancho_vereda)
+        if ($ancho_vereda)
             $censos = $censos->where('ancho_vereda', $ancho_vereda);
 
-        if($tipo_vereda)
+        if ($tipo_vereda)
             $censos = $censos->where('tipo_vereda', $tipo_vereda);
 
-        if ( $calle )
+        if ($calle)
             $censos = $censos->where('calle_id', $calle);
 
-        if ( $altura_min )
+        if ($altura_min)
             $censos = $censos->where('altura', '>=', $altura_min);
 
-        if ( $altura_max )
+        if ($altura_max)
             $censos = $censos->where('altura', '<=', $altura_max);
 
         $censos = $censos->orderBy('id', 'desc')->paginate(15);
@@ -96,7 +96,7 @@ class CensosController extends Controller
             ]
         );
 
-        if ( $validator->fails() ) {
+        if ($validator->fails()) {
             return [
                 "estado" => 0,
                 "mensaje" => $validator->errors()
@@ -106,7 +106,7 @@ class CensosController extends Controller
 
         $model = Censo::create($censo);
 
-        if ( $model )
+        if ($model)
             return response()->json([
                 'success' => 1,
                 'flash' => 'Censo Guardado.'
@@ -138,9 +138,14 @@ class CensosController extends Controller
         return view('censos.edit', compact('censo', 'especies', 'estados', 'diametros', 'anchos_veredas', 'tipos_vereda', 'calles', 'localidades', 'canteros', 'tamanios'));
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, $id)
     {
-        if(!auth()->user()->isAdmin()) {
+        if (!auth()->user()->isAdmin()) {
             flash('No tiene permiso para actualizar el registro.', 'warning');
             return redirect()->route('index');
         }
@@ -165,15 +170,20 @@ class CensosController extends Controller
         $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
         $output = json_decode($geocode);
 
-        $censo->lat = $output->results[0]->geometry->location->lat;
-        $censo->long = $output->results[0]->geometry->location->lng;
+        if ($output->status == 'OK') {
+            $arbol['lat'] = $output->results[0]->geometry->location->lat;
+            $arbol['long'] = $output->results[0]->geometry->location->lng;
+        } else {
+            $arbol['lat'] = 0;
+            $arbol['long'] = 0;
+        }
 
-        if ( $censo->update($request->all()) )
+        if ($censo->update($request->all()))
             flash('Censo actualizado!', 'success');
 
         $this->saveImagen($request, $censo);
 
-        return redirect()->route('index');
+        return redirect()->route('censos.show', $censo->id);
     }
 
     public function show($id)
@@ -212,7 +222,7 @@ class CensosController extends Controller
 
     public function destroy($id)
     {
-        if(!auth()->user()->isAdmin()) {
+        if (!auth()->user()->isAdmin()) {
             flash('No tiene permiso para eliminar el registro.', 'warning');
             return redirect()->route('index');
         }
@@ -241,7 +251,7 @@ class CensosController extends Controller
      */
     public function saveImagen(Request $request, Censo $censo)
     {
-        if ( $request->hasFile('image') ) {
+        if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
             $relative_path = 'uploads' . DIRECTORY_SEPARATOR . $filename;
