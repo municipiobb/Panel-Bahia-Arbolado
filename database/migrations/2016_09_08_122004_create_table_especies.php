@@ -21,6 +21,7 @@ class CreateTableEspecies extends Migration
             $table->string('familia')->default("");
             $table->string('origen')->default("");
             $table->string('nombre_comun')->default("");
+            $table->timestamp('fecha_ultima_poda');
             $table->timestamps();
         });
     }

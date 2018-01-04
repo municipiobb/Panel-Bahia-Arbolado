@@ -58,10 +58,10 @@ Route::get('/', 'HomeController@index')->name('index');
 Route::resource('especies', 'EspeciesController');
 Route::resource('calles', 'CallesController');
 Route::resource('imagenes', 'ImagenesController');
-
 Route::resource('censos', 'CensosController');
-Route::put('censos/{id}/aprobar', 'CensosController@aprobar');
-Route::delete('censos/imagen/{id}', 'CensosController@borrarImagen');
+
+Route::put('censos/{censo}/aprobar', 'CensosController@aprobar');
+Route::delete('censos/imagen/{censo}', 'CensosController@borrarImagen');
 
 Route::get('mapa', function(){
 	$censos = App\Censo::where('status', App\Censo::APROBADO)->get();
@@ -95,8 +95,6 @@ Route::post('login', 'Auth\LoginController@login');
 Route::get('logout', 'Auth\LoginController@logout');
 Route::post('logout', 'Auth\LoginController@logout');
 
-// Registration Routes... removed!
-
 // Password Reset Routes...
 Route::get('password/reset/{token?}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('password/email', 'Auth\ResetPasswordController@sendResetLinkEmail');
@@ -104,18 +102,10 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
 Route::get('password/change', 'Auth\ChangePasswordController@index');
 Route::post('password/change', 'Auth\ChangePasswordController@change');
-//Auth::routes();
 
 Route::get('usuarios', 'UsuariosController@index');
 Route::get('usuarios/{usuario}', 'UsuariosController@show');
 
-Route::get('line', function(){
-	$data = [
-		'az' => 'r3',
-		'b3' => 'w',
-		's1' => 'sf'
-	];
-});
 
 Route::get('/reportes', function(){
 

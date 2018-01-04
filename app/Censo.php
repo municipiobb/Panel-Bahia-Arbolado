@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property int long
  * @property int status
  * @property Collection imagenes
+ * @property string direccion
+ * @property integer altura
  */
 class Censo extends Model
 {

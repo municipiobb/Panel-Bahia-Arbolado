@@ -30,6 +30,8 @@ Route::get('/calles/{date?}', function ($date = '') {
     ]);
 });
 
+// Route::get('/latlogn', function(){});
+
 Route::get('/especies/{date?}', 'EspeciesController@getAll');
 
 Route::get('/getFormData', 'ApiController@getFormData');

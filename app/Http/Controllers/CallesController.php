@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Calle;
-use App\Censo;
 use App\Acme\Constantes;
 use Illuminate\Http\Request;
 use App\Http\Requests\CalleRequest;
@@ -67,12 +66,12 @@ class CallesController extends Controller
     }
 
     /**
-     * @param $id
+     * @param Calle $calle
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(Calle $calle)
     {
-        $calle = Calle::findOrFail($id);
+        // $calle = Calle::findOrFail($id);
 
         $localidades = Constantes::getLocalidades();
 
@@ -81,17 +80,17 @@ class CallesController extends Controller
 
     /**
      * @param CalleRequest $request
-     * @param $id
+     * @param Calle $calle
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(CalleRequest $request, $id)
+    public function update(CalleRequest $request, Calle $calle)
     {
         if(!auth()->user()->isAdmin()) {
             flash('No tiene permiso para actualizar el registro.', 'warning');
             return response()->redirectTo('calles');
         }
 
-        $calle = Calle::find($id)->update($request->all());
+        $calle = $calle->update($request->all());
 
         if($calle)
             flash('Calle actualizada.', 'success');

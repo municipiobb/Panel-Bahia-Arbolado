@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Acme\GoogleMapsGeocoder;
 use Illuminate\Support\Facades\DB;
 use Image;
 use App\Censo;
@@ -50,28 +51,16 @@ class ApiController extends Controller
             ];
         }
 
-        /**
-         *  Obtener latitud y longitud de google maps.
-         */
-        $aContext = array(
-            'http' => array(
-                'proxy' => '10.240.3.8:3128'
-            ),
-        );
 
-        $cxContext = stream_context_create($aContext);
+        $geo = new GoogleMapsGeocoder();
 
-        $address = $arbol['direccion'] . '+' . $arbol['altura'] . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
-        $prepAddr = str_replace(' ', '+', $address);
-        $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
-        $output = json_decode($geocode);
-        if ($output->status != 'ZERO_RESULTS') {
-            $arbol['lat'] = $output->results[0]->geometry->location->lat;
-            $arbol['long'] = $output->results[0]->geometry->location->lng;
-        } else {
-            $arbol['lat'] = 0;
-            $arbol['long'] = 0;
-        }
+        $geo->setProxy(env('HTTP_PROXY'), 'HTTP_PROXY_PORT');
+        $geo->setApiKey(env('GOOGLE_API_KEY'));
+
+        $geo = $this->geolocalizar($arbol['direccion'], $arbol['altura'], $geo);
+
+        $arbol['lat'] = $geo['lat'];
+        $arbol['long'] = $geo['long'];
 
         /** @var Censo $model */
         $model = Censo::create($arbol);
@@ -126,6 +115,7 @@ class ApiController extends Controller
 
             $path = public_path($relative_path);
 
+            /** @var \Intervention\Image\Image $img */
             $img = Image::make(base64_decode($imagen));
 
             if ($img->height() > $img->width()) {
@@ -169,6 +159,7 @@ class ApiController extends Controller
         $censos = DB::table('censos AS c')
             ->join('calles', 'calles.id', '=', 'c.calle_id')
             ->join('especies', 'especies.id', '=', 'c.especie_id')
+            ->join('imagenes', 'imagenes.censo_id', '=', 'c.id')
             ->select(
                 'especies.nombre AS especie',
                 'c.estado',
@@ -180,17 +171,46 @@ class ApiController extends Controller
                 'direccion',
                 'altura',
                 'lat',
-                'long'
+                'long',
+                'imagenes.url'
             )
             ->get();
-        /*
-        $censos = Censo::query()
-            ->with('calle')
-            ->with('especie')
-            ->select('censos.id', 'censos.estado', 'censos.estado')
-            ->get();
-        */
 
         return json_encode($censos);
     }
+
+    /**
+     * @param $calle
+     * @param $altura
+     * @param GoogleMapsGeocoder $geo
+     * @return array
+     */
+    private function geolocalizar($calle, $altura, $geo)
+    {
+        $geo->setAddress($calle . '+' . $altura . ', Bahia Blanca, Buenos Aires');
+
+        try {
+            $response = $geo->geocode(true);
+
+            if (isset($response['status'])) {
+                if ($response['status'] == 'OK') {
+                    $lat = $response['results'][0]['geometry']['location']['lat'];
+                    $long = $response['results'][0]['geometry']['location']['lng'];
+
+                    return [
+                        "lat" => $lat,
+                        "long" => $long
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            $errors['Exception'] = $e->getMessage();
+        }
+
+        return [
+            "lat" => 0,
+            "long" => 0
+        ];
+    }
+
 }

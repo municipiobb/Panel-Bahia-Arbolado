@@ -18,7 +18,7 @@ class Helpers
 
     public static function obtenerIP()
     {
-        if ($_SERVER['HTTP_X_FORWARDED_FOR'] != '') {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR']!= '') {
             $client_ip =
                 (!empty($_SERVER['REMOTE_ADDR'])) ?
                     $_SERVER['REMOTE_ADDR']

@@ -119,6 +119,8 @@
         var infoWindow;
         var markers = [];
         var markerClusters = [];
+        var baseURL = "{{ url('/') }}";
+
         function initialize() {
             var center = new google.maps.LatLng(-38.7183038, -62.2642266);
 
@@ -130,7 +132,7 @@
 
             infoWindow = new google.maps.InfoWindow();
 
-            $.getJSON('http://arboladoapp.bahiablanca.gob.ar/api/censos', function (data) {
+            $.getJSON(baseURL + '/api/censos', function (data) {
 
                 $.each(data.data, function (i, value) {
                     var myLatlng = new google.maps.LatLng(value.lat, value.long);
@@ -185,7 +187,7 @@
             $('#loading_data').show();
 
             var settings = {
-                "url": "http://arboladoapp.bahiablanca.gob.ar/api/mapa_ll",
+                "url": baseURL + "/api/mapa_ll",
                 "method": "POST",
                 "headers": {
                     "cache-control": "no-cache"
@@ -255,6 +257,6 @@
         });
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvUN-CRtMA8YD1vDpGFpt45VOuJXWIyzo&callback=initialize"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_API_KEY') }}&&callback=initialize"></script>
 
 @endsection

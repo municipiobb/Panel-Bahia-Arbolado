@@ -24,7 +24,15 @@ class CensoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre' => 'required'
+            'especie_id' => 'required|exists:especies,id',
+            'estado' => 'required',
+            'tamanio' => 'required',
+            'diametro_tronco' => 'required',
+            'ancho_vereda' => 'required',
+            'tipo_vereda' => 'required',
+            'cantero' => 'required',
+            'direccion' => 'required',
+            'altura' => 'required'
         ];
     }
 }

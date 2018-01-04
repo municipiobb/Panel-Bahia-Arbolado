@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Acme\GoogleMapsGeocoder;
 use Image;
 use App\Censo;
 use App\Calle;
@@ -154,29 +155,15 @@ class CensosController extends Controller
         $censo = Censo::findOrFail($id);
         $calle = Calle::findOrFail(request('calle_id'))->nombre;
 
-        /**
-         *  Obtener latitud y longitud de google maps.
-         */
-        $aContext = array(
-            'http' => array(
-                'proxy' => '10.240.3.8:3128'
-            ),
-        );
+        $geo = new GoogleMapsGeocoder();
 
-        $cxContext = stream_context_create($aContext);
+        $geo->setProxy(env('HTTP_PROXY'), 'HTTP_PROXY_PORT');
+        $geo->setApiKey(env('GOOGLE_API_KEY'));
 
-        $address = $calle . '+' . $request->get('altura') . '+Bahia+Blanca,+Buenos+Aires'; // Google HQ
-        $prepAddr = str_replace(' ', '+', $address);
-        $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $prepAddr . '&sensor=false', False, $cxContext);
-        $output = json_decode($geocode);
+        $geo = $this->geolocalizar($calle, $censo->altura, $geo);
 
-        if ($output->status == 'OK') {
-            $arbol['lat'] = $output->results[0]->geometry->location->lat;
-            $arbol['long'] = $output->results[0]->geometry->location->lng;
-        } else {
-            $arbol['lat'] = 0;
-            $arbol['long'] = 0;
-        }
+        $censo->lat = $geo['lat'];
+        $censo->long = $geo['long'];
 
         if ($censo->update($request->all()))
             flash('Censo actualizado!', 'success');
@@ -186,17 +173,21 @@ class CensosController extends Controller
         return redirect()->route('censos.show', $censo->id);
     }
 
-    public function show($id)
+    /**
+     * @param Censo $censo
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function show(Censo $censo)
     {
-        $censo = Censo::findOrFail($id);
-
         return view('censos.show', compact('censo'));
     }
 
-    public function aprobar($id)
+    /**
+     * @param Censo $censo
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function aprobar(Censo $censo)
     {
-        /** @var Censo $censo */
-        $censo = Censo::findOrFail($id);
         $censo->status = Censo::APROBADO;
         $censo->save();
 
@@ -276,5 +267,39 @@ class CensosController extends Controller
         } else {
             return response()->json([]);
         }
+    }
+
+    /**
+     * @param $calle
+     * @param $altura
+     * @param GoogleMapsGeocoder $geo
+     * @return array
+     */
+    private function geolocalizar($calle, $altura, $geo)
+    {
+        $geo->setAddress($calle . '+' . $altura . ', Bahia Blanca, Buenos Aires');
+
+        try {
+            $response = $geo->geocode(true);
+
+            if (isset($response['status'])) {
+                if ($response['status'] == 'OK') {
+                    $lat = $response['results'][0]['geometry']['location']['lat'];
+                    $long = $response['results'][0]['geometry']['location']['lng'];
+
+                    return [
+                        "lat" => $lat,
+                        "long" => $long
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            $errors['Exception'] = $e->getMessage();
+        }
+
+        return [
+            "lat" => 0,
+            "long" => 0
+        ];
     }
 }

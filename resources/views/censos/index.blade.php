@@ -134,7 +134,7 @@
                             <div class="col-md-12">
                                 <button class="btn btn-sm btn-primary" style="margin-top: 25px;">Buscar</button>
                                 <a class="btn btn-sm btn-default" style="margin-top: 25px;"
-                                   href="{{url('/')}}">Limpiar</a>
+                                   href="{{url('censos')}}">Limpiar</a>
                             </div>
                         </form>
 
@@ -221,7 +221,18 @@
                             @endforeach
                             </tbody>
                         </table>
-                        {{ $censos->links() }}
+                        {{ $censos->appends([
+                        'especie' => request()->especie,
+                        'estado' => request()->estado,
+                        'tamanio' => request()->tamanio,
+                        'diametro' => request()->diametro,
+                        'ancho_vereda' => request()->ancho_vereda,
+                        'tipo_vereda' => request()->tipo_vereda,
+                        'calle' => request()->calle,
+                        'altura_min' => request()->altura_min,
+                        'altura_max' => request()->altura_max
+
+                        ])->links() }}
                     </div>
                 </div>
             </div>
@@ -297,6 +308,7 @@
                     }
                 });
             }
+
             function borrarItem(id) {
                 bootbox.confirm("Desea eliminar el registro N° " + id + " ?", function (result) {
                     if (result) {

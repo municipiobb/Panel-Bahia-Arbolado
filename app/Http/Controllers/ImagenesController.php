@@ -23,6 +23,11 @@ class ImagenesController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, $id)
     {
         if(!auth()->user()->isAdmin()) {
@@ -46,8 +51,6 @@ class ImagenesController extends Controller
             });
 
             $resized->save($path);
-
-            $img_data = file_get_contents($path);
 
             Storage::disk('public')->delete($url);
 

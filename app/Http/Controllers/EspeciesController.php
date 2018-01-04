@@ -96,8 +96,6 @@ class EspeciesController extends Controller
 
         $especie->delete();
 
-        //flash('Especie Eliminada.', 'warning');
-
         return "";//redirect()->route('especies.index');
     }
 }
